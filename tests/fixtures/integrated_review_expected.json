@@ -1,0 +1,11 @@
+{
+  "selected_specialists": ["code_quality", "security", "test_coverage", "gitops", "cicd_groovy"],
+  "file_count": 7,
+  "applicability": {
+    "application_and_test": ["app/RefundService.java", "app/RefundServiceTest.java"],
+    "jenkins_and_shared_step": ["Jenkinsfile", "vars/publishImage.groovy"],
+    "flux_kubernetes_and_kustomize": ["gitops/base/jenkins.yaml", "gitops/base/kustomization.yaml", "gitops/overlays/aks-dev/kustomization.yaml"]
+  },
+  "evaluation_scope": "Scripted orchestration and report integration only. No model accuracy, build, test, scan, rendering, or deployment result is established.",
+  "fixture_origins": "Pipeline and platform files are unchanged copies of the project's existing fictional examples. Java and JUnit files are static source data and must not execute."
+}

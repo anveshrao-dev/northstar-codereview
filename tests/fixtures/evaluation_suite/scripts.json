@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "scenarios": [
+    {
+      "id": "java_backend",
+      "claims": [
+        {
+          "id": "refund_claim",
+          "agent_name": "code_quality",
+          "category": "correctness",
+          "severity": "medium",
+          "confidence": 0.8,
+          "title": "Full refunds lose one cent",
+          "explanation": "The no-fee contract and JUnit assertion require 100 cents for a 100-cent refund; subtraction returns 99.",
+          "suggested_remediation": "Return the full amount under the stated contract.",
+          "assumptions": [
+            "Scripted integration claim; no runtime execution."
+          ],
+          "locations": [
+            {
+              "file_path": "src/main/java/northstar/fictional/RefundService.java",
+              "start_line": 4,
+              "end_line": 7
+            },
+            {
+              "file_path": "src/test/java/northstar/fictional/RefundServiceTest.java",
+              "start_line": 5,
+              "end_line": 7
+            }
+          ]
+        },
+        {
+          "id": "deliberate_balance_false_positive",
+          "agent_name": "code_quality",
+          "category": "correctness",
+          "severity": "medium",
+          "confidence": 0.8,
+          "title": "Scripted incorrect balance allegation",
+          "explanation": "This deliberate false-positive fixture alleges subtraction must add the refunded amount.",
+          "suggested_remediation": "This remediation is deliberately incorrect for scoring integration.",
+          "assumptions": [
+            "Scripted integration claim; no runtime execution."
+          ],
+          "locations": [
+            {
+              "file_path": "src/main/java/northstar/fictional/RefundService.java",
+              "start_line": 8,
+              "end_line": 11
+            },
+            {
+              "file_path": "src/test/java/northstar/fictional/RefundServiceTest.java",
+              "start_line": 8,
+              "end_line": 12
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "claim_id": "refund_claim",
+          "verdict": "match",
+          "expected_id": "full_refund"
+        },
+        {
+          "claim_id": "deliberate_balance_false_positive",
+          "verdict": "false_positive",
+          "control_id": "remaining_balance"
+        }
+      ]
+    },
+    {
+      "id": "angular_frontend",
+      "claims": [
+        {
+          "id": "stock_claim",
+          "agent_name": "code_quality",
+          "category": "correctness",
+          "severity": "medium",
+          "confidence": 0.8,
+          "title": "Exact stock is rejected",
+          "explanation": "Strict greater-than returns false for 5 available and 5 requested although the declared contract permits it.",
+          "suggested_remediation": "Use an inclusive comparison and test equality.",
+          "assumptions": [
+            "Scripted integration claim; no runtime execution."
+          ],
+          "locations": [
+            {
+              "file_path": "src/app/inventory.service.ts",
+              "start_line": 5,
+              "end_line": 8
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "claim_id": "stock_claim",
+          "verdict": "match",
+          "expected_id": "exact_stock"
+        }
+      ]
+    },
+    {
+      "id": "jenkins_aks",
+      "claims": [
+        {
+          "id": "selector_claim",
+          "agent_name": "gitops",
+          "category": "gitops",
+          "severity": "medium",
+          "confidence": 0.8,
+          "title": "Deployment selector disagrees with pod labels",
+          "explanation": "The selector app value is jenkins-agent while the template has jenkins-worker.",
+          "suggested_remediation": "Align the declared selector and template labels; rendered behavior remains unverified.",
+          "assumptions": [
+            "Scripted integration claim; no runtime execution."
+          ],
+          "locations": [
+            {
+              "file_path": "gitops/base/jenkins.yaml",
+              "start_line": 30,
+              "end_line": 43
+            }
+          ]
+        },
+        {
+          "id": "push_claim",
+          "agent_name": "cicd_groovy",
+          "category": "cicd",
+          "severity": "medium",
+          "confidence": 0.8,
+          "title": "Push status success is treated as failure",
+          "explanation": "The library raises error for returnStatus zero and leaves nonzero unhandled in the captured publication path.",
+          "suggested_remediation": "Fail on nonzero status under the stated Jenkins contract.",
+          "assumptions": [
+            "Scripted integration claim; no runtime execution."
+          ],
+          "locations": [
+            {
+              "file_path": "vars/publishImage.groovy",
+              "start_line": 6,
+              "end_line": 10
+            },
+            {
+              "file_path": "Jenkinsfile",
+              "start_line": 22,
+              "end_line": 33
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "claim_id": "selector_claim",
+          "verdict": "match",
+          "expected_id": "selector_mismatch"
+        },
+        {
+          "claim_id": "push_claim",
+          "verdict": "match",
+          "expected_id": "push_status_inverted"
+        }
+      ]
+    }
+  ]
+}

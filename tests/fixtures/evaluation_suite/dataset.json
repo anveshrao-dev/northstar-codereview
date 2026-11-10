@@ -1,0 +1,313 @@
+{
+  "schema_version": 1,
+  "id": "northstar_offline_baseline",
+  "scenarios": [
+    {
+      "id": "java_backend",
+      "source_directory": "java_backend",
+      "snapshot": {
+        "snapshot_id": "fd5265de-6814-5da6-8296-965e15a5a1ca",
+        "revision": "e1e74bb28fec89c2251dce1eb1e88d2231d0961781fff8009b20b16e3f05a812",
+        "files": [
+          {
+            "file_path": "pom.xml",
+            "side": "head",
+            "sha256": "2de71c77eece0646b8366ae3693471d0d8485f1cc2384ff1ca6c8df185142477"
+          },
+          {
+            "file_path": "src/main/java/northstar/fictional/RefundService.java",
+            "side": "head",
+            "sha256": "5b8a0091b99162a9e4b39de7eb414e09c55206aa5426a097732839044c81fd88"
+          },
+          {
+            "file_path": "src/test/java/northstar/fictional/RefundServiceTest.java",
+            "side": "head",
+            "sha256": "5c109685aa126f9fd506ab6fbe557c7533a016b913f49425966c5c657a4a6be2"
+          }
+        ]
+      },
+      "specialists": [
+        "code_quality",
+        "security",
+        "test_coverage"
+      ],
+      "expected": [
+        {
+          "id": "full_refund",
+          "agent_name": "code_quality",
+          "category": "correctness",
+          "behavior": "A positive amount must be refunded in full; refund(100) must be 100 but returns 99.",
+          "locations": [
+            {
+              "file_path": "src/main/java/northstar/fictional/RefundService.java",
+              "side": "head",
+              "start_line": 4,
+              "end_line": 7
+            },
+            {
+              "file_path": "src/test/java/northstar/fictional/RefundServiceTest.java",
+              "side": "head",
+              "start_line": 5,
+              "end_line": 7
+            }
+          ],
+          "description": "The implementation subtracts one cent contrary to the no-fee contract and supplied JUnit assertion.",
+          "severity": "medium"
+        }
+      ],
+      "controls": [
+        {
+          "id": "remaining_balance",
+          "agent_name": "code_quality",
+          "category": "correctness",
+          "behavior": "Subtraction is correct under 0 <= refund <= balance, including zero, full and partial refunds.",
+          "locations": [
+            {
+              "file_path": "src/main/java/northstar/fictional/RefundService.java",
+              "side": "head",
+              "start_line": 8,
+              "end_line": 11
+            },
+            {
+              "file_path": "src/test/java/northstar/fictional/RefundServiceTest.java",
+              "side": "head",
+              "start_line": 8,
+              "end_line": 12
+            }
+          ]
+        }
+      ],
+      "assumptions": [
+        "Integer cents, positive amount, no fees.",
+        "Remaining-balance input contract holds, no concurrency."
+      ],
+      "completeness_boundary": "Three captured Maven/Java/JUnit files only. No compilation, dependencies or tests executed. No claims about unprovided callers or build readiness.",
+      "provenance": "Authored before evaluation. Refund contract adapted from integrated_review/app; balance control independently specified. Original fixtures and labels preserved."
+    },
+    {
+      "id": "angular_frontend",
+      "source_directory": "angular_frontend",
+      "snapshot": {
+        "snapshot_id": "af79177d-0b34-5f93-a979-770cc3bd961f",
+        "revision": "34a7ed68445c7a691291c5acc52c510c16e8ae9005b88771ccb7e28b67bf2614",
+        "files": [
+          {
+            "file_path": "package.json",
+            "side": "head",
+            "sha256": "f930ca93c229868d2746c206afcdfb9e681afc5ded1da9c8cfd4cbdd882c88ef"
+          },
+          {
+            "file_path": "src/app/inventory.service.spec.ts",
+            "side": "head",
+            "sha256": "9540ed9466d869f58b22df813cb006b07162a2912ec9efeb58ad85dca37e6826"
+          },
+          {
+            "file_path": "src/app/inventory.service.ts",
+            "side": "head",
+            "sha256": "f4c74e37e98845bbf908a020905aec6272671d5138aaedddc79a871315e71a3c"
+          },
+          {
+            "file_path": "src/app/order.component.ts",
+            "side": "head",
+            "sha256": "ad3d7be9ad37bc8142d1308e8422c2b94f4928264b4107a4271e7b3394842be9"
+          }
+        ]
+      },
+      "specialists": [
+        "code_quality",
+        "security",
+        "test_coverage"
+      ],
+      "expected": [
+        {
+          "id": "exact_stock",
+          "agent_name": "code_quality",
+          "category": "correctness",
+          "behavior": "canFulfill(5,5) must return true; strict greater-than returns false.",
+          "locations": [
+            {
+              "file_path": "src/app/inventory.service.ts",
+              "side": "head",
+              "start_line": 5,
+              "end_line": 8
+            }
+          ],
+          "description": "Strict greater-than rejects an order when stock exactly equals the request.",
+          "severity": "medium"
+        },
+        {
+          "id": "exact_stock_test_gap",
+          "agent_name": "test_coverage",
+          "category": "tests",
+          "behavior": "Captured tests cover 4/5 and 6/5 but omit canFulfill(5,5) == true, which distinguishes > from >=.",
+          "locations": [
+            {
+              "file_path": "src/app/inventory.service.ts",
+              "side": "head",
+              "start_line": 5,
+              "end_line": 8
+            },
+            {
+              "file_path": "src/app/inventory.service.spec.ts",
+              "side": "head",
+              "start_line": 4,
+              "end_line": 7
+            }
+          ],
+          "description": "The supplied spec omits the documented exact-stock boundary; this is a gap only in the captured tests.",
+          "severity": "medium"
+        }
+      ],
+      "controls": [
+        {
+          "id": "stock_subtraction",
+          "agent_name": "code_quality",
+          "category": "correctness",
+          "behavior": "stockAfterFulfillment correctly subtracts requested units when requested <= available, including exact stock.",
+          "locations": [
+            {
+              "file_path": "src/app/inventory.service.ts",
+              "side": "head",
+              "start_line": 9,
+              "end_line": 12
+            },
+            {
+              "file_path": "src/app/inventory.service.spec.ts",
+              "side": "head",
+              "start_line": 8,
+              "end_line": 11
+            }
+          ]
+        }
+      ],
+      "assumptions": [
+        "Nonnegative integer stock and strictly positive requested units.",
+        "Subtraction receives requested <= available; no concurrency."
+      ],
+      "completeness_boundary": "Four captured Angular/TypeScript/package files only. No npm, Jasmine, TypeScript or browser execution. This is not a complete runnable Angular workspace. Versions are static context, not compatibility assertions.",
+      "provenance": "Authored before evaluation. Boundary semantics adapted from quality_inventory labels into new Angular source with independent Jasmine cases. Original labels preserved."
+    },
+    {
+      "id": "jenkins_aks",
+      "source_directory": "jenkins_aks",
+      "snapshot": {
+        "snapshot_id": "b88b4447-7fc2-5a52-9f4d-395727807f68",
+        "revision": "397fb4344b7a7d33d1a5db097653881fafad049a0479ef8f9a20bd9a74ebb773",
+        "files": [
+          {
+            "file_path": "Jenkinsfile",
+            "side": "head",
+            "sha256": "d832ad4e7bc5cc7b551e289728f31441bb1884f4fa508b1829c77abea230ab36"
+          },
+          {
+            "file_path": "gitops/base/jenkins.yaml",
+            "side": "head",
+            "sha256": "6190493bbc4ca06ff56e3f5a84e4415dcee07ff2c234e34bb940b4dc5ff59060"
+          },
+          {
+            "file_path": "gitops/base/kustomization.yaml",
+            "side": "head",
+            "sha256": "76cb46214236b7b1ffe25dc080ae247bea1d75365b70745f5fabd864a8482ccc"
+          },
+          {
+            "file_path": "gitops/overlays/aks-dev/kustomization.yaml",
+            "side": "head",
+            "sha256": "fe28082f19943dc40d52c000649a84729e12178d16fa6c3d31214c8a609160c7"
+          },
+          {
+            "file_path": "vars/publishImage.groovy",
+            "side": "head",
+            "sha256": "4c77e790196d90b39417591fc073ad3e4f9b96dafd1908558947993d86f2b17a"
+          }
+        ]
+      },
+      "specialists": [
+        "security",
+        "gitops",
+        "cicd_groovy"
+      ],
+      "expected": [
+        {
+          "id": "selector_mismatch",
+          "agent_name": "gitops",
+          "category": "gitops",
+          "behavior": "Deployment selector app=jenkins-agent must match pod-template labels; template has app=jenkins-worker.",
+          "locations": [
+            {
+              "file_path": "gitops/base/jenkins.yaml",
+              "side": "head",
+              "start_line": 30,
+              "end_line": 43
+            }
+          ],
+          "description": "Captured Deployment selector and pod-template labels differ.",
+          "severity": "medium"
+        },
+        {
+          "id": "push_status_inverted",
+          "agent_name": "cicd_groovy",
+          "category": "cicd",
+          "behavior": "Zero docker push returnStatus means success, nonzero failure; the library calls error on zero.",
+          "locations": [
+            {
+              "file_path": "vars/publishImage.groovy",
+              "side": "head",
+              "start_line": 6,
+              "end_line": 10
+            },
+            {
+              "file_path": "Jenkinsfile",
+              "side": "head",
+              "start_line": 22,
+              "end_line": 33
+            }
+          ],
+          "description": "Publication status handling is inverted: successful pushes fail the stage while nonzero status is unhandled.",
+          "severity": "medium"
+        }
+      ],
+      "controls": [
+        {
+          "id": "chart_source_reference",
+          "agent_name": "gitops",
+          "category": "gitops",
+          "behavior": "Main jenkins HelmRelease sourceRef matches captured jenkins-charts HelmRepository kind/name/namespace.",
+          "locations": [
+            {
+              "file_path": "gitops/base/jenkins.yaml",
+              "side": "head",
+              "start_line": 2,
+              "end_line": 9
+            },
+            {
+              "file_path": "gitops/base/jenkins.yaml",
+              "side": "head",
+              "start_line": 11,
+              "end_line": 28
+            }
+          ]
+        },
+        {
+          "id": "credential_stdin_pattern",
+          "agent_name": "cicd_groovy",
+          "category": "cicd",
+          "behavior": "Single-quoted Groovy shell text, quoted shell variables, set +x and password-stdin avoid the specific Groovy interpolation and CLI-password pattern.",
+          "locations": [
+            {
+              "file_path": "Jenkinsfile",
+              "side": "head",
+              "start_line": 25,
+              "end_line": 31
+            }
+          ]
+        }
+      ],
+      "assumptions": [
+        "Publication is enabled, login returns and Jenkins sh returnStatus follows zero-success semantics.",
+        "No rendered overlays, installed charts or cluster inventory supplied."
+      ],
+      "completeness_boundary": "Five Jenkins/Groovy/Flux/Helm/Kustomize/Kubernetes files. platformScan, external chart inventory, Dockerfile and application build are outside scope. Never executed, rendered, deployed or reconciled. Safe credential control does not establish runtime secrecy.",
+      "provenance": "Authored before evaluation from gitops_jenkins_expected and cicd_pipeline_expected. Five files copied byte-for-byte from integrated_review, original labels preserved."
+    }
+  ]
+}

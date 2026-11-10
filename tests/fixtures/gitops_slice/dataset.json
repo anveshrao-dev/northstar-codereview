@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "id": "gitops_vertical_slice_v1",
+  "scenarios": [
+    {
+      "id": "gitops_selector_slice",
+      "source_directory": "source",
+      "snapshot": {
+        "snapshot_id": "26aaec55-507e-548d-b078-b8d32aef215f",
+        "revision": "eb4d191ef0d12e61a3099a76bfb8475d9de04e35f1ce384228b09447fd72f320",
+        "files": [
+          {
+            "file_path": "resources.yaml",
+            "side": "head",
+            "sha256": "17d784eb977abb048dea9bd63f5a9cf87482b9ca3c53cb072e6c70f876160cc7"
+          }
+        ]
+      },
+      "specialists": [
+        "gitops"
+      ],
+      "expected": [
+        {
+          "id": "service_selector_mismatch",
+          "agent_name": "gitops",
+          "category": "gitops",
+          "behavior": "Within the captured fictional namespace, the Service selects app northstar-cargo while the Deployment pod template uses app northstar-crate. It does not select those pods. Other cluster pods and runtime endpoints are unknown.",
+          "locations": [
+            {
+              "file_path": "resources.yaml",
+              "side": "head",
+              "start_line": 12,
+              "end_line": 14
+            },
+            {
+              "file_path": "resources.yaml",
+              "side": "head",
+              "start_line": 25,
+              "end_line": 29
+            }
+          ],
+          "description": "Service selector differs from the captured Deployment pod labels.",
+          "severity": "medium"
+        }
+      ],
+      "controls": [
+        {
+          "id": "deployment_selector_consistent",
+          "agent_name": "gitops",
+          "category": "gitops",
+          "behavior": "The Deployment matchLabels selector matches its pod-template labels; this relationship is internally consistent.",
+          "locations": [
+            {
+              "file_path": "resources.yaml",
+              "side": "head",
+              "start_line": 8,
+              "end_line": 14
+            }
+          ]
+        }
+      ],
+      "assumptions": [
+        "Both documents are fictional standalone resources in the same namespace; no rendering or overlays are applied.",
+        "Only relationships between these captured resources are evaluated; external inventory and runtime health are unknown."
+      ],
+      "completeness_boundary": "Two captured fictional resources only; no claim of complete cluster or repository inventory.",
+      "provenance": "New synthetic fixture authored for the GitOps-only slice; no employer source, prior findings, or expected answers copied into specialist instructions."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: northstar-crate
+  namespace: fictional-slice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: northstar-crate
+  template:
+    metadata:
+      labels:
+        app: northstar-crate
+    spec:
+      containers:
+        - name: crate
+          image: example.invalid/fictional/crate:1.0
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: northstar-crate
+  namespace: fictional-slice
+spec:
+  selector:
+    app: northstar-cargo
+  ports:
+    - port: 80
+      targetPort: 8080

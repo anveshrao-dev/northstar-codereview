@@ -1,0 +1,22 @@
+{
+  "fixture": "quality_inventory/inventory.py",
+  "expected_findings": [
+    {
+      "function": "can_fulfill_order",
+      "category": "correctness",
+      "evidence_lines": [4, 6],
+      "behavior": "An order equal to available stock is incorrectly rejected",
+      "precondition": "available and requested are positive integers",
+      "example": {"available": 5, "requested": 5, "expected": true, "actual_by_source_inspection": false}
+    }
+  ],
+  "negative_control": {
+    "function": "stock_after_fulfillment",
+    "evidence_lines": [9, 11],
+    "expected_findings": 0,
+    "behavior": "Subtracting a fulfilled positive quantity returns the correct remaining stock",
+    "precondition": "available and requested are positive integers with requested <= available",
+    "example": {"available": 5, "requested": 5, "expected": 0}
+  },
+  "evaluation_limit": "Criteria defined before inference. Citation overlap alone does not establish defect correctness or a false positive. Source is never executed."
+}

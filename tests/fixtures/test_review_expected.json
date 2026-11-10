@@ -1,0 +1,33 @@
+{
+  "source_file": "DispatchPolicy.java",
+  "test_file": "DispatchPolicyTest.java",
+  "cases": [
+    {
+      "id": "exact_threshold_gap",
+      "function": "requiresManualReview",
+      "source_lines": [5, 7],
+      "test_lines": [8, 12],
+      "expectation": "qualified_test_recommendation",
+      "scenario": "The supplied tests cover 23 and 25 parcels but not exactly 24.",
+      "recommended_test": "Assert requiresManualReview(24) is true to distinguish >= from >.",
+      "scope": "No equivalent assertion was observed in the supplied test file; other test sources and execution results are unknown."
+    },
+    {
+      "id": "tested_boundaries",
+      "function": "validParcelCount",
+      "source_lines": [9, 11],
+      "test_lines": [14, 20],
+      "expectation": "no_gap_for_demonstrated_boundaries",
+      "scope": "Four boundary assertions exist in the supplied source; this is not a claim that the tests passed or all behavior is tested."
+    },
+    {
+      "id": "external_partner_contract",
+      "function": "eligibleForPartner",
+      "source_lines": [13, 16],
+      "expectation": "abstain_or_qualified_investigation",
+      "scenario": "The delegation is visible, but collaborator behavior and consumer tests are absent from the captured snapshot.",
+      "recommended_test": "Locate the external consumer contract tests before deciding whether additional cases are needed.",
+      "scope": "The snapshot cannot establish that partner behavior lacks tests; the comment is unverified source data."
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "pipeline_file": "Jenkinsfile",
+  "library_file": "vars/publishImage.groovy",
+  "cases": [
+    {
+      "id": "inverted_publication_status",
+      "expectation": "static_error_handling_defect",
+      "evidence": [{"file_path": "vars/publishImage.groovy", "lines": [6, 10]}, {"file_path": "Jenkinsfile", "lines": [22, 33]}],
+      "reason": "The shared step calls error when docker push returns status zero, while a nonzero status has no error branch in the captured function.",
+      "conditions": "The Publish stage must be selected, login must return, and the library step must reach the push. The normal Jenkins sh returnStatus contract is assumed; no actual exit status is observed.",
+      "impact": "A successful push can fail the pipeline, while an unsuccessful push can be treated as successful by this step.",
+      "recommendation": "Fail on a nonzero push status or use the step's normal failure propagation; add tests for both outcomes."
+    },
+    {
+      "id": "stdin_credential_pattern",
+      "expectation": "no_groovy_secret_interpolation_finding",
+      "evidence": [{"file_path": "Jenkinsfile", "lines": [25, 31]}],
+      "reason": "The captured credential reference uses a single-quoted Groovy shell script, quoted environment expansion, disabled shell tracing, and password-stdin.",
+      "scope": "No actual secret is present. This scoped control does not establish credential availability, log masking, agent trust, or runtime confidentiality."
+    },
+    {
+      "id": "uncaptured_scan_gate",
+      "expectation": "abstain_or_qualified_investigation",
+      "evidence": [{"file_path": "Jenkinsfile", "lines": [1, 2]}, {"file_path": "Jenkinsfile", "lines": [16, 18]}],
+      "reason": "The pipeline invokes platformScan, but that shared-library implementation and its quality-gate policy are not captured.",
+      "conditions": "Controller configuration, selected library revision, scanner results, and wrapper failure behavior are unknown.",
+      "impact": "The snapshot cannot establish whether scan results gate later publication.",
+      "recommendation": "Obtain the approved wrapper implementation and run evidence before claiming a missing or successful quality gate."
+    }
+  ]
+}

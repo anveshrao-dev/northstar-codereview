@@ -1,0 +1,40 @@
+@Library('northstar-ci') _
+// Fictional source data; never executed or submitted to Jenkins.
+pipeline {
+    agent any
+    parameters {
+        booleanParam(name: 'PUBLISH_IMAGE', defaultValue: false, description: 'Publish the fictional image')
+    }
+    environment {
+        REGISTRY_HOST = 'registry.example.invalid'
+        IMAGE_REF = 'registry.example.invalid/northstar/service:fixture'
+    }
+    stages {
+        stage('Build and test') {
+            steps { sh 'mvn -B verify' }
+        }
+        stage('Scan') {
+            steps { platformScan(project: 'fictional-service') }
+        }
+        stage('Container') {
+            steps { sh 'docker build -t "$IMAGE_REF" .' }
+        }
+        stage('Publish') {
+            when { expression { params.PUBLISH_IMAGE } }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'fictional-registry-reference',
+                    usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_PASSWORD')]) {
+                    sh '''
+                        set +x
+                        printf '%s' "$REGISTRY_PASSWORD" |
+                            docker login "$REGISTRY_HOST" --username "$REGISTRY_USER" --password-stdin
+                    '''
+                    publishImage(imageRef: env.IMAGE_REF)
+                }
+            }
+        }
+    }
+    post {
+        always { echo 'Fictional pipeline declaration; no execution evidence supplied.' }
+    }
+}

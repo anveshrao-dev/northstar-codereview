@@ -1,0 +1,29 @@
+{
+  "source": "account_lookup.py",
+  "cases": [
+    {
+      "id": "untrusted_query_value",
+      "function": "find_account",
+      "lines": [4, 7],
+      "expectation": "observed_unsafe_pattern",
+      "category": "security",
+      "reason": "The documented untrusted request value is concatenated into SQL and executed without value binding.",
+      "limits": "Database permissions, deployed reachability, and exploit success are not established."
+    },
+    {
+      "id": "bound_query_value",
+      "function": "find_account_parameterized",
+      "lines": [10, 14],
+      "expectation": "no_finding",
+      "reason": "The value is bound separately under the stated question-mark DB-API driver contract."
+    },
+    {
+      "id": "unknown_table_origin",
+      "function": "list_audit_rows",
+      "lines": [17, 20],
+      "expectation": "abstain_or_qualified_potential",
+      "reason": "The snapshot does not establish whether table_name is attacker-controlled or allowlisted by callers.",
+      "required_uncertainty": "Caller trust and identifier allowlisting require investigation; no confirmed exploitability."
+    }
+  ]
+}

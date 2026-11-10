@@ -1,0 +1,17 @@
+{
+  "fixture": "quality/refunds.py",
+  "expected_findings": [
+    {
+      "function": "refund",
+      "category": "correctness",
+      "evidence_lines": [4, 6],
+      "behavior": "Subtracts one although the documented refund has no fee"
+    }
+  ],
+  "negative_control": {
+    "function": "refund_without_fee",
+    "evidence_lines": [9, 11],
+    "expected_findings": 0
+  },
+  "evaluation_limit": "Labels precede the demo; a scripted fake demonstrates plumbing, not model accuracy."
+}

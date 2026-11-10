@@ -1,0 +1,64 @@
+# Fictional Jenkins-on-AKS input; never applied, rendered, or reconciled.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: jenkins-charts
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://charts.northstar.example.invalid
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jenkins
+  namespace: ci
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: jenkins
+      version: "0.0.0-fictional"
+      sourceRef:
+        kind: HelmRepository
+        name: jenkins-charts
+        namespace: flux-system
+  values:
+    controller:
+      serviceType: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-agent-pool
+  namespace: ci
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-agent
+  template:
+    metadata:
+      labels:
+        app: jenkins-worker
+    spec:
+      containers:
+        - name: agent
+          image: example.invalid/northstar/jenkins-agent:fictional
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jenkins-addons
+  namespace: ci
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: fictional-addons
+      version: "0.0.0-fictional"
+      sourceRef:
+        kind: HelmRepository
+        name: platform-addons
+        namespace: shared-platform
+# The shared platform source inventory is outside this captured example.

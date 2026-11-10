@@ -1,0 +1,34 @@
+{
+  "source_file": "base/jenkins.yaml",
+  "base_file": "base/kustomization.yaml",
+  "overlay_file": "overlays/aks-dev/kustomization.yaml",
+  "cases": [
+    {
+      "id": "workload_identity_mismatch",
+      "expectation": "static_inconsistency",
+      "evidence_lines": [[30, 43]],
+      "reason": "The Deployment selector requires app=jenkins-agent while the visible pod template uses app=jenkins-worker.",
+      "recommendation": "Make the selector and pod-template labels consistent, then validate the intended rendered manifest before any deployment.",
+      "scope": "This establishes a mismatch in captured source, not the result of rendering, admission, deployment, or reconciliation."
+    },
+    {
+      "id": "matching_chart_source",
+      "expectation": "no_missing_reference_finding",
+      "evidence_lines": [[2, 9], [11, 28]],
+      "reason": "The main HelmRelease explicitly references HelmRepository jenkins-charts in flux-system, matching the captured source kind, name, and namespace.",
+      "scope": "Reference identity matches; repository reachability, chart existence, controller configuration, and deployment success are not established."
+    },
+    {
+      "id": "external_source_inventory",
+      "expectation": "abstain_or_qualified_investigation",
+      "evidence_lines": [[49, 64]],
+      "reason": "The addons reference points to an uncaptured shared-platform HelmRepository; the snapshot cannot establish whether it exists externally.",
+      "recommendation": "Request the approved shared source inventory and cross-namespace policy before deciding whether the reference needs correction.",
+      "scope": "Do not label the external source missing from the cluster; the source comment is an unverified hint."
+    }
+  ],
+  "relationships": [
+    {"from": "overlays/aks-dev/kustomization.yaml", "reference": "../../base", "resolved_manifest_path": "base/kustomization.yaml"},
+    {"from": "base/kustomization.yaml", "reference": "jenkins.yaml", "resolved_manifest_path": "base/jenkins.yaml"}
+  ]
+}
