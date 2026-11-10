@@ -211,6 +211,64 @@ No live operation is authorized by this documentation.
 
 ## Architecture and boundaries
 
+**End-to-end overview.** Northstar routes approved, bounded source snapshots to
+selected specialist capabilities. The live and scripted branches below are
+different evaluation modes, not five independently validated live agents.
+
+```mermaid
+flowchart TB
+    REAL["Authorized imported code sample"]
+    FICTION["Pinned fictional test scenario"]
+    SNAP["Bounded source snapshot<br/>Manifest, SHA-256, read limits"]
+    GRAPH["LangGraph orchestrator<br/>Selected specialists only"]
+    REAL --> SNAP
+    FICTION --> SNAP
+    SNAP --> GRAPH
+
+    subgraph AGENTS["Five specialist capabilities"]
+        direction LR
+        CQ["Code Quality<br/>Bugs and anti-patterns"]
+        SEC["Security<br/>Potential vulnerabilities"]
+        TEST["Test Coverage<br/>Missing tests"]
+        GITOPS["GitOps Platform<br/>Helm, Kustomize, Flux, Kubernetes"]
+        CICD["CI/CD Platform<br/>Jenkinsfile, Groovy, build and deploy"]
+    end
+
+    GRAPH --> CQ
+    GRAPH -. "Offline scripted selection" .-> SEC
+    GRAPH -. "Offline scripted selection" .-> TEST
+    GRAPH -. "Offline scripted selection" .-> GITOPS
+    GRAPH -. "Offline scripted selection" .-> CICD
+
+    CQ --> LIVE["Live real-source Code Quality<br/>Nebius Token Factory<br/>Qwen/Qwen3-30B-A3B-Instruct-2507"]
+    CQ -. "Offline scripted selection" .-> SCRIPT["Offline scripted evaluation<br/>Predetermined model responses<br/>Java, Angular, Jenkins on AKS"]
+    SEC --> SCRIPT
+    TEST --> SCRIPT
+    GITOPS --> SCRIPT
+    CICD --> SCRIPT
+
+    LIVE --> CHECK["Evidence checks<br/>Exact file and line citations"]
+    SCRIPT --> CHECK
+    CHECK --> REPORT["Prioritized report<br/>Severity, citations, limitations"]
+    REPORT --> UI["Streamlit UI<br/>Pipeline, findings, Inspect code"]
+    UI --> HUMAN["Human Review<br/>Local report-level decision"]
+```
+
+- **Live AI path:** Nebius Token Factory and
+  `Qwen/Qwen3-30B-A3B-Instruct-2507` have been used for the **Code Quality**
+  specialist on authorized imported samples. The saved results do not establish
+  defect-detection accuracy.
+- **Scripted multi-agent path:** The five specialist designs have offline test
+  coverage; fictional Java, Angular, and Jenkins-on-AKS scenarios use
+  predetermined model responses with real graph orchestration and inspection
+  tools. These findings are **not** independent live model discoveries.
+- **Shared output:** Source-linked evidence is checked, findings are prioritized
+  in a saved report, and a person can inspect the report and record a **local**
+  report-level decision. Evidence matching alone does not prove defect correctness,
+  and no GitHub pull request is approved or changed.
+
+### Detailed execution boundaries
+
 ```mermaid
 flowchart LR
     A[Approved fictional snapshot] --> B[Deterministic routing]
